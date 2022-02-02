@@ -1,6 +1,12 @@
 # Write your code here
 from random import randint
 
+from db import DBManager
+
+
+db = DBManager('card.s3db')
+db.create_table()
+
 
 class GenerateAccount:
     def generate_card_number(self):
@@ -53,6 +59,8 @@ class BankingSystem:
         self.card_number = card_number
         self.card_pin = card_pin
 
+        db.insert_card(card_number, card_pin)
+
         print('Your card has been created')
         print('Your card number:')
         print(self.card_number)
@@ -66,7 +74,7 @@ class BankingSystem:
         card_number_input = input('Enter your card number:\n')
         card_pin_input = input('Enter your PIN:\n')
 
-        if card_number_input == self.card_number and card_pin_input == self.card_pin:
+        if db.get_pin_and_number(card_number_input) == card_pin_input:
             print('\nYou have successfully logged in!\n')
             flag = True
         else:
@@ -76,11 +84,13 @@ class BankingSystem:
             name_input = self.menu_balance()
 
             if name_input == 1:
-                print('Balance: 0\n')
+                balance = db.get_balance(card_number_input)
+                print(f'Balance: {balance}\n')
             elif name_input == 2:
                 print('You have successfully logged out!\n')
                 break
             elif name_input == 0:
+                db.close_cursor()
                 self.exit()
 
     @staticmethod

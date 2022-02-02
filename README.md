@@ -1,24 +1,57 @@
 # Simple-Banking-System-JetBrains-Academy
 This project jetbrains academy https://hyperskill.org/projects/109
 
-## Work on project. Stage 2/4: Luhn algorithm
+## Work on project. Stage 3/4: I'm so lite
+
+### Description
+You can use the sqlite3 module to manage SQLite databases from Python. 
+You don't need to install this module. It is included in the standard library.
+
+To use the module, you must first create a Connection object that represents the database. 
+Here the data will be stored in the example.s3db file:
+
+```python
+import sqlite3
+conn = sqlite3.connect('example.s3db')
+```
+
+Once you have a ```Connection```, you can create a ```Cursor``` object and call its ```execute()``` method to perform SQL queries:
+
+```python
+cur = conn.cursor()
+
+# Executes some SQL query
+cur.execute('SOME SQL QUERY')
+
+# After making some changes in DB don't forget to commit them!
+conn.commit()
+```
+
+To get data returned by the SELECT query you can use the methods ```fetchone()``` and ```fetchall()```:
+
+```python
+cur.execute('SOME SELECT QUERY')
+
+# Returns the first row from the response
+cur.fetchone()
+
+# Returns all rows from the response
+cur.fetchall()
+```
+
 ### Objectives
 
-You should allow customers to create a new account in our banking system.
+In this stage, create a database named ```card.s3db``` with a table titled ```card```. It should have the following columns:
 
-Once the program starts, you should print the menu:
+- id INTEGER
+- number TEXT
+- pin TEXT
+- balance INTEGER DEFAULT 0
 
-1. Create an account
-2. Log into account
-3. Exit
-If the customer chooses ‘Create an account’, you should generate a new card number which satisfies all the conditions described above. 
-Then you should generate a PIN code that belongs to the generated card number. The PIN code is a sequence of any 4 digits. 
-PIN should be generated in a range from 0000 to 9999.
+Pay attention: your database file should be created when the program starts if it hasn’t yet been created. 
+And all created cards should be stored in the database from now.
 
-If the customer chooses ‘Log into account’, you should ask to enter the card information.
-
-After the information has been entered correctly, you should allow the user to check the account balance; after creating the account, the balance should be 0. 
-It should also be possible to log out of the account and exit the program.
+Do not forget to commit your DB changes right after executing a query!
 
 #### Examples
 The greater-than symbol followed by a space (>) represents the user input.
@@ -31,7 +64,7 @@ The greater-than symbol followed by a space (>) represents the user input.
 
 Your card has been created
 Your card number:
-4000004938320896
+4000003429795087
 Your card PIN:
 6826
 
@@ -41,7 +74,7 @@ Your card PIN:
 >2
 
 Enter your card number:
->4000004938320896
+>4000003429795087
 Enter your PIN:
 >4444
 
@@ -53,7 +86,7 @@ Wrong card number or PIN!
 >2
 
 Enter your card number:
->4000004938320896
+>4000003429795087
 Enter your PIN:
 >6826
 
