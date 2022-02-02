@@ -6,7 +6,11 @@ class GenerateAccount:
     def generate_card_number(self):
         card_num = '400000'
         card_num += self.generate_account_number(9, 0, 9)
-        card_num += self.check_digit()
+        card_numbers = [int(x) for x in card_num]
+        processed_n = self.process_numbers(card_numbers)
+        check_n = self.check_digit(processed_n)
+
+        card_num += str(check_n)
 
         return card_num, self.generate_account_number(4, 0, 9)
 
@@ -18,9 +22,23 @@ class GenerateAccount:
         return account_num
 
     @staticmethod
-    def check_digit():
-        random_digit = str(randint(1, 9))
-        return random_digit
+    def process_numbers(num):
+        for i in range(0, len(num), 2):
+            num[i] *= 2
+        num = [x-9 if x > 9 else x for x in num]
+        return num
+
+    @staticmethod
+    def check_digit(card_num):
+        num_sum = sum(card_num)
+        check_d = 0
+
+        while True:
+            if (num_sum + check_d) % 10 == 0:
+                break
+            check_d += 1
+
+        return check_d
 
 
 class BankingSystem:
