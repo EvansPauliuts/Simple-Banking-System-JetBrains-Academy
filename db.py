@@ -15,6 +15,7 @@ class DBManager:
         """
         self.INSERT_ACCOUNT_CARD = "INSERT INTO card (number, pin) VALUES (?, ?);"
         self.GET_PIN_AND_NUMBER = "SELECT pin FROM card WHERE number = ?;"
+        self.GET_CARD_NUMBER = "SELECT number FROM card WHERE number = ?;"
         self.GET_BALANCE = "SELECT balance FROM card WHERE number = ?;"
         self.UPDATE_BALANCE = "UPDATE card SET balance = ? WHERE number = ?;"
         self.DELETE_ACCOUNT_CARD = "DELETE FROM card WHERE number = ?;"
@@ -32,6 +33,10 @@ class DBManager:
     def get_pin_and_number(self, number):
         pin = self.cur.execute(self.GET_PIN_AND_NUMBER, (number, )).fetchone()
         return -1 if pin is None else pin[0]
+
+    def get_card_number_check(self, number):
+        card = self.cur.execute(self.GET_CARD_NUMBER, (number, )).fetchone()
+        return -1 if card is None else card[0]
 
     def get_balance(self, number):
         balance = self.cur.execute(self.GET_BALANCE, (number, )).fetchone()

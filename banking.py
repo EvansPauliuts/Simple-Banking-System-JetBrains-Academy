@@ -2,10 +2,13 @@
 from random import randint
 
 from db import DBManager
+from transacion import Transaction
 
 
 db = DBManager('card.s3db')
 db.create_table()
+
+transaction_account = Transaction()
 
 
 class GenerateAccount:
@@ -45,6 +48,28 @@ class GenerateAccount:
             check_d += 1
 
         return check_d
+
+    @staticmethod
+    def check_algorithm_luhn(card_number):
+        n_digits = len(card_number)
+        n_sum = 0
+        is_second = False
+
+        for i in range(n_digits - 1, -1, -1):
+            d = ord(card_number[i]) - ord('0')
+
+            if is_second:
+                d = d * 2
+
+            n_sum += d // 10
+            n_sum += d % 10
+
+            is_second = not is_second
+
+        if n_sum % 10 == 0:
+            return n_sum
+
+        return False
 
 
 class BankingSystem:
@@ -87,6 +112,30 @@ class BankingSystem:
                 balance = db.get_balance(card_number_input)
                 print(f'Balance: {balance}\n')
             elif name_input == 2:
+                transaction_account.add_balance()
+                db.update_balance(card_number_input, transaction_account.balance)
+            elif name_input == 3:
+                print('Transfer')
+                card_number_check = input('Enter card number:\n')
+
+                check_alg = GenerateAccount.check_algorithm_luhn(card_number_check)
+
+                if check_alg:
+                    check_card = db.get_card_number_check(card_number_check)
+
+                    if check_card == -1:
+                        print('Such a card does not exist.')
+                    if check_card == card_number_input:
+                        print('You can\'t transfer money to the same account!\n')
+                    else:
+                        self.do_transactions(db.get_balance(card_number_input), card_number_input, card_number_check)
+                else:
+                    print('Probably you made a mistake in the card number. Please try again!\n')
+            elif name_input == 4:
+                db.delete_account_card(card_number_input)
+                print('The account has been closed!\n')
+                break
+            elif name_input == 5:
                 print('You have successfully logged out!\n')
                 break
             elif name_input == 0:
@@ -94,9 +143,25 @@ class BankingSystem:
                 self.exit()
 
     @staticmethod
+    def do_transactions(balance_db, card_number, card_transfer):
+        money_transfer = int(input('Enter how much money you want to transfer:\n'))
+
+        if balance_db >= money_transfer:
+            subtraction_money = balance_db - money_transfer
+            db.update_balance(card_number, subtraction_money)
+            db.update_balance(card_transfer, money_transfer)
+            print('Success!\n')
+        else:
+            print('Not enough money!\n')
+
+
+    @staticmethod
     def menu_balance():
         print('1. Balance')
-        print('2. Log out')
+        print('2. Add income')
+        print('3. Do transfer')
+        print('4. Close account')
+        print('5. Log out')
         print('0. Exit')
 
         user_input = int(input())
